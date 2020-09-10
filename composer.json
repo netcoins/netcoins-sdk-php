@@ -1,0 +1,28 @@
+{
+    "name": "netcoins/netcoins-api",
+    "description": "A package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Simon Willan",
+            "email": "swillan@gonetcoins.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Netcoins\\": "src/Netcoins"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Netcoins\\Tests": "tests/"
+        }
+    },
+    "require": {
+        "php": "~7.3.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    }
+}
