@@ -13,7 +13,7 @@ use Netcoins\Connector;
 class Client
 {
     /**
-     * @var $api
+     * @var ApiInterface
      */
     protected $api;
 
@@ -142,5 +142,15 @@ class Client
         }
 
         return bcdiv($fiat, $price, 8);
+    }
+
+    /**
+     * Return instance of Netcoins API Connector
+     *
+     * @return ApiInterface
+     */
+    public function getAPIConnector() : ApiInterface
+    {
+        return $this->api;
     }
 }
