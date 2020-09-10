@@ -14,7 +14,7 @@ interface ApiInterface
      * Endpoint GET
      *
      * @param string $endpoint
-     * @param bool $auth
+     * @param bool $auth (optional,default:true)
      * @return array
      */
     public function get(string $endpoint, bool $auth = true) : array;
@@ -23,7 +23,7 @@ interface ApiInterface
      * Endpoint POST
      *
      * @param string $endpoint
-     * @param array $body
+     * @param array $body (optional,default:[])
      * @return array
      */
     public function post(string $endpoint, array $body = []) : array;

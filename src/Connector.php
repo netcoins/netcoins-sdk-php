@@ -109,7 +109,7 @@ class Connector implements ApiInterface
      * @return array
      * @throws GuzzleException
      */
-    private function query(string $endpoint, array $body = [], string $method = 'get', bool $auth = true): array
+    private function query(string $endpoint, ?array $body = [], string $method = 'get', bool $auth = true): array
     {
         if ($auth && $this->isAuthExpired()) {
             $this->auth();

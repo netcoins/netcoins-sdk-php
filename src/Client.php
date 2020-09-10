@@ -42,7 +42,7 @@ class Client
      * @param string $currency (optional)
      * @return array
      */
-    public function prices($asset = null, $currency = null)
+    public function prices(?string $asset = null, ?string $currency = null) : array
     {
         $prices = $this->api->get('prices');
 
@@ -58,8 +58,10 @@ class Client
 
     /**
      * Fetch a list of tradeable assets
+     *
+     * @return array
      */
-    public function assets()
+    public function assets() : array
     {
         return $this->api->get('assets');
     }
@@ -74,7 +76,7 @@ class Client
      * @throws \Exception
      * @return array
      */
-    public function quote($quantity, $side, $asset, $currency)
+    public function quote(float $quantity, string $side, string $asset, string $currency) : array
     {
         if (!in_array(strtolower($currency), $this->currencies)) {
             throw new \Exception('tradeable pair not valid. You may only trade against the following currencies: ' . implode(', ', $this->currencies));
@@ -92,8 +94,9 @@ class Client
      * Create order for a given asset/pair
      *
      * @param string $quoteId
+     * @return array
      */
-    public function execute($quoteId)
+    public function execute(string $quoteId) : array
     {
         return $this->api->post('execute', ['quote_id' => $quoteId]);
     }
@@ -105,8 +108,9 @@ class Client
      * @param float $quantity
      * @param string $wallet
      * @param string $memo (optional)
+     * @return array
      */
-    public function withdraw($asset, $quantity, $wallet, $memo = null)
+    public function withdraw(string $asset, float $quantity, string $wallet, ?string $memo = null) : array
     {
         return $this->api->post('withdraw', [
             'asset' => strtolower($asset),
@@ -125,7 +129,7 @@ class Client
      * @param string $currency
      * @return float
      */
-    public function convert($fiat, $side, $asset, $currency)
+    public function convert(float $fiat, string $side, string $asset, string $currency) : float
     {
         $minimums = ['btc' => 0.001, 'ltc' => 0.5, 'eth' => 0.1, 'xrp' => 50, 'bch' => 0.1];
 
