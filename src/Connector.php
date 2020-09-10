@@ -69,7 +69,7 @@ class Connector implements ApiInterface
      * @param array $config
      * @return void
      */
-    public function setConfig(array $config) : void
+    public function setConfig(array $config): void
     {
         $defaults = [];
         $this->config = array_merge($defaults, $config);
@@ -82,7 +82,7 @@ class Connector implements ApiInterface
      * @param bool $auth (optional,default:true)
      * @return array
      */
-    public function get(string $endpoint, bool $auth = true) : array
+    public function get(string $endpoint, bool $auth = true): array
     {
         return $this->query($endpoint, [], 'get', $auth);
     }
@@ -94,7 +94,7 @@ class Connector implements ApiInterface
      * @param array $body (optional,default:[])
      * @return array
      */
-    public function post(string $endpoint, array $body = []) : array
+    public function post(string $endpoint, array $body = []): array
     {
         return $this->query($endpoint, $body, 'post', true);
     }
@@ -109,7 +109,7 @@ class Connector implements ApiInterface
      * @return array
      * @throws GuzzleException
      */
-    private function query(string $endpoint, array $body = [], string $method = 'get', bool $auth = true) : array
+    private function query(string $endpoint, array $body = [], string $method = 'get', bool $auth = true): array
     {
         if ($auth && $this->isAuthExpired()) {
             $this->auth();
@@ -138,7 +138,7 @@ class Connector implements ApiInterface
      * @return void
      * @throws GuzzleException
      */
-    private function auth() : void
+    private function auth(): void
     {
         if ($this->token) {
             $this->revoke();
@@ -163,7 +163,7 @@ class Connector implements ApiInterface
      * @return void
      * @throws GuzzleException
      */
-    public function revoke() : void
+    public function revoke(): void
     {
         $this->http->request('post', $this->prefix . 'auth/revoke', [
             \GuzzleHttp\RequestOptions::HEADERS => [
@@ -181,7 +181,7 @@ class Connector implements ApiInterface
      *
      * @return bool
      */
-    public function isAuthExpired() : bool
+    public function isAuthExpired(): bool
     {
         $now = time();
         return !$this->token || ($this->token && $this->expiresAt <= $now);
@@ -192,7 +192,7 @@ class Connector implements ApiInterface
      *
      * @return string|null
      */
-    public function getToken() : ?string
+    public function getToken(): ?string
     {
         return $this->token;
     }
@@ -213,7 +213,7 @@ class Connector implements ApiInterface
      *
      * @return int|null
      */
-    public function getTokenExpiry() : ?int
+    public function getTokenExpiry(): ?int
     {
         return $this->expiresAt;
     }
