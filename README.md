@@ -1,6 +1,6 @@
 # Netcoins API (PHP)
 
-This library aims to offer easy to use, highly configfurable access to the Netcoins Inc API.
+This library aims to offer easy to use, highly configurable access to the Netcoins Inc API.
 
 ## Installation
 
