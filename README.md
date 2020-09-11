@@ -1,4 +1,4 @@
-# Netcoins API Library (PHP)
+# Netcoins API Client (PHP)
 
 This library aims to offer easy to use, highly configurable access to the Netcoins Inc API.
 
@@ -12,7 +12,7 @@ composer require netcoins/netcoins-lib-php
 
 ## Usage
 
-**Netcoins API Library has a minimum requirement of PHP 7.3.**
+**Netcoins API Client has a minimum requirement of PHP 7.3.**
 
 Currently most endpoints require authentication. You can authenticate by configuring your Netcoins login credentials and passing them to the Netcoins Client.
 
