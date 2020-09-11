@@ -3,10 +3,8 @@ namespace Netcoins\Tests;
 
 use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\Exception\RequestException;
 
 use Netcoins\Connector as NetcoinsConnector;
 

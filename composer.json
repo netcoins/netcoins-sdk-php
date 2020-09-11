@@ -10,12 +10,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Netcoins\\": "src/Netcoins"
+            "Netcoins\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Netcoins\\Tests": "tests/"
+            "Netcoins\\Tests\\": "tests/"
         }
     },
     "require": {
