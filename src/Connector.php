@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * A class to handle connection to API via guzzle.
- * Handles auth & revoke methods, and querying the API
+ * Handles auth & revoke methods, and querying the API.
  *
  * @author Simon Willan <swillan@gonetcoins.com>
  */
@@ -21,7 +21,7 @@ class Connector implements ApiInterface
     /**
      * @var string
      */
-    private $host = '';
+    private $host = 'https://staging.netcoins.app';
 
     /**
      * @var string
@@ -51,9 +51,9 @@ class Connector implements ApiInterface
     /**
      * Setup API with new client
      *
-     * @param array $config (optional,default:[])
-     * @param int $version (optional,default:2)
-     * @param Guzzle $http
+     * @param array     $config (optional,default:[])
+     * @param int       $version (optional,default:2)
+     * @param Guzzle    $http
      */
     public function __construct(array $config = [], int $version = 2, $http = null)
     {
@@ -64,9 +64,10 @@ class Connector implements ApiInterface
     }
 
     /**
-     * Set http request config
+     * Sets http request config
      *
-     * @param array $config
+     * @param array     $config
+     *
      * @return void
      */
     public function setConfig(array $config): void
@@ -78,20 +79,23 @@ class Connector implements ApiInterface
     /**
      * Endpoint GET
      *
-     * @param string $endpoint
-     * @param bool $auth (optional,default:true)
+     * @param string    $endpoint
+     * @param bool      $auth (optional,default:true)
+     * @param array     $body (optional,default:[])
+     *
      * @return array
      */
-    public function get(string $endpoint, bool $auth = true): array
+    public function get(string $endpoint, bool $auth = true, array $body = []): array
     {
-        return $this->query($endpoint, [], 'get', $auth);
+        return $this->query($endpoint, $body, 'get', $auth);
     }
 
     /**
      * Endpoint POST
      *
-     * @param string $endpoint
-     * @param array $body (optional,default:[])
+     * @param string    $endpoint
+     * @param array     $body (optional,default:[])
+     *
      * @return array
      */
     public function post(string $endpoint, array $body = []): array
@@ -100,13 +104,15 @@ class Connector implements ApiInterface
     }
 
     /**
-     * Query the endpoint
+     * Queries an endpoint
      *
-     * @param string $endpoint
-     * @param array $body (optional,default:[])
-     * @param string $method (optional,default:'get')
-     * @param bool $auth (optional,default:true)
+     * @param string    $endpoint
+     * @param array     $body (optional,default:[])
+     * @param string    $method (optional,default:'get')
+     * @param bool      $auth (optional,default:true)
+     *
      * @return array
+     *
      * @throws GuzzleException
      */
     private function query(string $endpoint, ?array $body = [], string $method = 'get', bool $auth = true): array
@@ -133,9 +139,10 @@ class Connector implements ApiInterface
     }
 
     /**
-     * Authorize endpoint
+     * Authorizes API access
      *
      * @return void
+     *
      * @throws GuzzleException
      */
     private function auth(): void
@@ -158,9 +165,10 @@ class Connector implements ApiInterface
     }
 
     /**
-     * Reset & revoke authorization
+     * Resets & revokes authorization
      *
      * @return void
+     *
      * @throws GuzzleException
      */
     public function revoke(): void
@@ -188,7 +196,7 @@ class Connector implements ApiInterface
     }
 
     /**
-     * Retrieve auth token
+     * Gets auth token
      *
      * @return string|null
      */
@@ -200,7 +208,8 @@ class Connector implements ApiInterface
     /**
      * Sets API auth token
      *
-     * @param string $token
+     * @param string    $token
+     *
      * @return void
      */
     public function setToken(string $token): void
@@ -209,7 +218,7 @@ class Connector implements ApiInterface
     }
 
     /**
-     * Retrieves token expiry time
+     * Gets token expiry time
      *
      * @return int|null
      */
@@ -219,7 +228,7 @@ class Connector implements ApiInterface
     }
 
     /**
-     * Retrieves Guzzle implementation
+     * Gets Guzzle implementation
      *
      * @return Guzzle
      */

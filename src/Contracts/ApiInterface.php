@@ -13,25 +13,28 @@ interface ApiInterface
     /**
      * Endpoint GET
      *
-     * @param string $endpoint
-     * @param bool $auth (optional,default:true)
+     * @param string    $endpoint
+     * @param bool      $auth (optional,default:true)
+     * @param array     $body (optional,default:[])
+     *
      * @return array
      */
-    public function get(string $endpoint, bool $auth = true) : array;
+    public function get(string $endpoint, bool $auth = true, array $body = []): array;
 
     /**
      * Endpoint POST
      *
-     * @param string $endpoint
-     * @param array $body (optional,default:[])
+     * @param string    $endpoint
+     * @param array     $body (optional,default:[])
+     *
      * @return array
      */
-    public function post(string $endpoint, array $body = []) : array;
+    public function post(string $endpoint, array $body = []): array;
 
     /**
      * Retrieves Guzzle implementation
      *
      * @return Guzzle
      */
-    public function getHttpClient() : Guzzle;
+    public function getHttpClient(): Guzzle;
 }
