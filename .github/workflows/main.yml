@@ -1,0 +1,16 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ v1.x ]
+
+jobs:
+  build:
+    runs-on: ubuntu-lates
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: php-actions/composer@v2
+      - uses: php-actions/phpunit@v8
+        
