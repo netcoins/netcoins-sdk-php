@@ -222,14 +222,22 @@ class Client
     public function orders(?int $beforeDateTime = null, ?int $afterDateTime = null,
         ?int $offset = null, ?int $limit = null, ?string $status = null): array
     {
+        $params = [];
+
         // convert timestamp to formatted date time
         if (!empty($beforeDateTime)) {
             $beforeDateTime = date('Y:m:d H:i:s', $beforeDateTime);
+            $params['before'] = $beforeDateTime;
         }
 
         // convert timestamp to formatted date time
         if (!empty($afterDateTime)) {
             $afterDateTime = date('Y:m:d H:i:s', $afterDateTime);
+            $params['after'] = $afterDateTime;
+        }
+
+        if (!empty($status)) {
+            $params['status'] = $status;
         }
 
         // check status exists in allowed status array
@@ -238,13 +246,15 @@ class Client
                 Please use one of the following, or omit the status:' . implode(', ', static::STATUSES));
         }
 
-        return $this->api->get('orders', true, [
-            'before' => $beforeDateTime,
-            'after' => $afterDateTime,
-            'offset' => $offset,
-            'limit' => $limit,
-            'status' => $status,
-        ]);
+        if (!empty($offset)) {
+            $params['offset'] = $offset;
+        }
+
+        if (!empty($limit)) {
+            $params['limit'] = $limit;
+        }
+
+        return $this->api->get('orders', true, $params);
     }
 
     /**

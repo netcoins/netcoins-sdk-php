@@ -4,7 +4,6 @@ namespace Netcoins;
 use GuzzleHttp\Client as Guzzle;
 use Netcoins\Contracts\ApiInterface;
 use Netcoins\Contracts\AuthInterface;
-use Netcoins\Auth\AuthClientCredentials;
 use GuzzleHttp\Exception\GuzzleException;
 use Netcoins\Auth\AuthPersonalAccessToken;
 
@@ -96,16 +95,18 @@ class Connector implements ApiInterface
             $this->auth->authorize();
         }
 
-        $json = [];
-        if ($body) {
-            $json = [\GuzzleHttp\RequestOptions::JSON => $body];
+        $params = [];
+        if ($body && in_array(strtolower($method), ['post', 'put', 'patch', 'delete'])) {
+            $params = [\GuzzleHttp\RequestOptions::JSON => $body];
+        } else if ($body && strtolower($method) === 'get') {
+            $params = [\GuzzleHttp\RequestOptions::QUERY => $body];
         }
 
         $response = $this->http->request($method, $this->prefix . $endpoint, array_merge([
             \GuzzleHttp\RequestOptions::HEADERS => [
                 'Authorization' => 'Bearer '.$this->auth->getToken()
             ]
-        ], $json));
+        ], $params));
 
         $content = $response->getBody()->getContents();
         $data = json_decode($content, true);
