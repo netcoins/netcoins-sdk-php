@@ -6,6 +6,7 @@ use Netcoins\Contracts\ApiInterface;
 use Netcoins\Contracts\AuthInterface;
 use Netcoins\Auth\AuthClientCredentials;
 use GuzzleHttp\Exception\GuzzleException;
+use Netcoins\Auth\AuthPersonalAccessToken;
 
 /**
  * A class to handle connection to API via guzzle.
@@ -47,7 +48,7 @@ class Connector implements ApiInterface
     {
         $this->prefix = "api/v$version/";
         $this->http = !isset($http) ? new Guzzle(['base_uri' => $this->host]) : $http;
-        $this->auth = !isset($auth) ? new AuthClientCredentials($config, $this->prefix, $this->http) : $auth;
+        $this->auth = !isset($auth) ? new AuthPersonalAccessToken($config, $this->prefix, $this->http) : $auth;
     }
 
     /**
