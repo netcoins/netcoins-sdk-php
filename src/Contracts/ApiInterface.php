@@ -37,4 +37,11 @@ interface ApiInterface
      * @return Guzzle
      */
     public function getHttpClient(): Guzzle;
+
+    /**
+     * Returns the concrete Auth implementation
+     *
+     * @return AuthInterface
+     */
+    public function getAuthHandler(): AuthInterface;
 }

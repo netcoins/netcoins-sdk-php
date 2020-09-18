@@ -5,9 +5,9 @@ use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
+use Netcoins\Contracts\ApiInterface;
 use Netcoins\Client as NetcoinsClient;
 use Netcoins\Connector as NetcoinsConnector;
-use Netcoins\Contracts\ApiInterface;
 
 final class ClientTest extends \PHPUnit\Framework\TestCase
 {

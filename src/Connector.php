@@ -3,11 +3,13 @@ namespace Netcoins;
 
 use GuzzleHttp\Client as Guzzle;
 use Netcoins\Contracts\ApiInterface;
+use Netcoins\Contracts\AuthInterface;
+use Netcoins\Auth\AuthClientCredentials;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * A class to handle connection to API via guzzle.
- * Handles auth & revoke methods, and querying the API.
+ * Handles querying the API.
  *
  * @author Simon Willan <swillan@gonetcoins.com>
  */
@@ -17,6 +19,11 @@ class Connector implements ApiInterface
      * @var Guzzle
      */
     private $http;
+
+    /**
+     * @var AuthInterface
+     */
+    private $auth;
 
     /**
      * @var string
@@ -29,51 +36,18 @@ class Connector implements ApiInterface
     private $prefix = '';
 
     /**
-     * @var array
-     */
-    private $auth = [];
-
-    /**
-     * @var array
-     */
-    private $config = [];
-
-    /**
-     * @var string
-     */
-    private $token;
-
-    /**
-     * @var int
-     */
-    private $expiresAt;
-
-    /**
      * Setup API with new client
      *
-     * @param array     $config (optional,default:[])
-     * @param int       $version (optional,default:2)
-     * @param Guzzle    $http
+     * @param array         $config
+     * @param int           $version (optional,default:2)
+     * @param Guzzle        $http (optional)
+     * @param AuthInterface $auth (optional)
      */
-    public function __construct(array $config = [], int $version = 2, $http = null)
+    public function __construct(array $config, int $version = 2, $http = null, AuthInterface $auth = null)
     {
-        $this->setConfig($config);
-
         $this->prefix = "api/v$version/";
         $this->http = !isset($http) ? new Guzzle(['base_uri' => $this->host]) : $http;
-    }
-
-    /**
-     * Sets http request config
-     *
-     * @param array     $config
-     *
-     * @return void
-     */
-    public function setConfig(array $config): void
-    {
-        $defaults = [];
-        $this->config = array_merge($defaults, $config);
+        $this->auth = !isset($auth) ? new AuthClientCredentials($config, $this->prefix, $this->http) : $auth;
     }
 
     /**
@@ -117,8 +91,8 @@ class Connector implements ApiInterface
      */
     private function query(string $endpoint, ?array $body = [], string $method = 'get', bool $auth = true): array
     {
-        if ($auth && $this->isAuthExpired()) {
-            $this->auth();
+        if ($auth && $this->auth->isAuthExpired()) {
+            $this->auth->authorize();
         }
 
         $json = [];
@@ -128,7 +102,7 @@ class Connector implements ApiInterface
 
         $response = $this->http->request($method, $this->prefix . $endpoint, array_merge([
             \GuzzleHttp\RequestOptions::HEADERS => [
-                'Authorization' => "Bearer $this->token"
+                'Authorization' => 'Bearer '.$this->auth->getToken()
             ]
         ], $json));
 
@@ -139,95 +113,6 @@ class Connector implements ApiInterface
     }
 
     /**
-     * Authorizes API access
-     *
-     * @return void
-     *
-     * @throws GuzzleException
-     */
-    private function auth(): void
-    {
-        if ($this->token) {
-            $this->revoke();
-        }
-
-        $params = ['grant_type' => 'password', 'scope' => ''];
-        $response = $this->http->request('post', 'oauth/token', [
-            \GuzzleHttp\RequestOptions::FORM_PARAMS => array_merge($params, $this->config)
-        ]);
-
-        $content = $response->getBody()->getContents();
-        $now = time();
-
-        $this->auth = json_decode($content, true);
-        $this->token = $this->auth['access_token'];
-        $this->expiresAt = $now + $this->auth['expires_in'];
-    }
-
-    /**
-     * Resets & revokes authorization
-     *
-     * @return void
-     *
-     * @throws GuzzleException
-     */
-    public function revoke(): void
-    {
-        $this->http->request('post', $this->prefix . 'auth/revoke', [
-            \GuzzleHttp\RequestOptions::HEADERS => [
-                'Authorization' => "Bearer $this->token"
-            ]
-        ]);
-
-        $this->token = null;
-        $this->expiresAt = null;
-        $this->auth = [];
-    }
-
-    /**
-     * Has auth expired?
-     *
-     * @return bool
-     */
-    public function isAuthExpired(): bool
-    {
-        $now = time();
-        return !$this->token || ($this->token && $this->expiresAt <= $now);
-    }
-
-    /**
-     * Gets auth token
-     *
-     * @return string|null
-     */
-    public function getToken(): ?string
-    {
-        return $this->token;
-    }
-
-    /**
-     * Sets API auth token
-     *
-     * @param string    $token
-     *
-     * @return void
-     */
-    public function setToken(string $token): void
-    {
-        $this->token = $token;
-    }
-
-    /**
-     * Gets token expiry time
-     *
-     * @return int|null
-     */
-    public function getTokenExpiry(): ?int
-    {
-        return $this->expiresAt;
-    }
-
-    /**
      * Gets Guzzle implementation
      *
      * @return Guzzle
@@ -235,5 +120,15 @@ class Connector implements ApiInterface
     public function getHttpClient(): Guzzle
     {
         return $this->http;
+    }
+
+    /**
+     * Returns the concrete Auth implementation
+     *
+     * @return AuthInterface
+     */
+    public function getAuthHandler(): AuthInterface
+    {
+        return $this->auth;
     }
 }
