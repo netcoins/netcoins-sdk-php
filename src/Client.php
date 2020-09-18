@@ -236,13 +236,13 @@ class Client
 
         // convert timestamp to formatted date time
         if (!empty($beforeDateTime)) {
-            $beforeDateTime = date('Y:m:d H:i:s', $beforeDateTime);
+            $beforeDateTime = date('Y-m-d H:i:s', $beforeDateTime);
             $params['before'] = $beforeDateTime;
         }
 
         // convert timestamp to formatted date time
         if (!empty($afterDateTime)) {
-            $afterDateTime = date('Y:m:d H:i:s', $afterDateTime);
+            $afterDateTime = date('Y-m-d H:i:s', $afterDateTime);
             $params['after'] = $afterDateTime;
         }
 
@@ -324,7 +324,7 @@ class Client
      *
      * @return string|null
      */
-    public function despoitAddress(string $asset): ?string
+    public function depositAddress(string $asset): ?string
     {
         $asset = strtoupper($asset);
         $address = $this->api->get('deposit/'.$asset);
