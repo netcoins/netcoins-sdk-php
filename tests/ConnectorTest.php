@@ -5,7 +5,8 @@ use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
-
+use Netcoins\Auth\AuthClientCredentials;
+use Netcoins\Contracts\AuthInterface;
 use Netcoins\Connector as NetcoinsConnector;
 
 final class ConnectorTest extends \PHPUnit\Framework\TestCase
@@ -27,43 +28,9 @@ final class ConnectorTest extends \PHPUnit\Framework\TestCase
         $stack = HandlerStack::create($mock);
         $http = new Guzzle(['handler' => $stack]);
 
-        return new NetcoinsConnector([], 2, $http);
-    }
+        $auth = new AuthClientCredentials([], 'api/v2/', $http);
 
-    /**
-     *
-     */
-    public function testIsAuthorizing()
-    {
-        $netcoins = $this->getNetcoins([
-            new Response(200, [], json_encode([])),
-        ]);
-
-        // result is unimportant, looking at auth only here.
-        $netcoins->get('/', true);
-
-        $this->assertEquals($netcoins->getToken(), 'Q3YUxsq4QHWrpxZ0Gequqdu15xCljrah');
-        $this->assertFalse($netcoins->isAuthExpired());
-    }
-
-    /**
-     *
-     */
-    public function testRevokeEmptysAuth()
-    {
-        $netcoins = $this->getNetcoins([
-            new Response(200, [], json_encode([])),
-            new Response(200, [], json_encode([])),
-        ]);
-
-        // result is unimportant, looking at auth only here.
-        $netcoins->get('/', true);
-
-        $netcoins->revoke();
-
-        $this->assertEquals(null, $netcoins->getToken());
-        $this->assertEquals(null, $netcoins->getTokenExpiry());
-        $this->assertTrue($netcoins->isAuthExpired());
+        return new NetcoinsConnector([], 2, $http, $auth);
     }
 
     /**
@@ -79,8 +46,7 @@ final class ConnectorTest extends \PHPUnit\Framework\TestCase
                 ]
             ])),
         ]);
-
-        // result is unimportant, looking at auth only here.
+   // result is unimportant, looking at auth only here.
         $response = $netcoins->get('/prices', true);
 
         $this->assertIsArray($response);
@@ -92,8 +58,18 @@ final class ConnectorTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorSetsGuzzleIfNotSet()
     {
-        $netcoins = new NetcoinsConnector([], 2);
+        $netcoins = new NetcoinsConnector([]);
 
         $this->assertInstanceOf(Guzzle::class, $netcoins->getHttpClient());
+    }
+
+    /**
+     *
+     */
+    public function testConstructorSetsAuthIfNotSet()
+    {
+        $netcoins = new NetcoinsConnector([]);
+
+        $this->assertInstanceOf(AuthInterface::class, $netcoins->getAuthHandler());
     }
 }

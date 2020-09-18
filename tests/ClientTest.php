@@ -5,9 +5,10 @@ use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
+use Netcoins\Auth\AuthClientCredentials;
+use Netcoins\Contracts\ApiInterface;
 use Netcoins\Client as NetcoinsClient;
 use Netcoins\Connector as NetcoinsConnector;
-use Netcoins\Contracts\ApiInterface;
 
 final class ClientTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,7 +29,9 @@ final class ClientTest extends \PHPUnit\Framework\TestCase
         $stack = HandlerStack::create($mock);
         $http = new Guzzle(['handler' => $stack]);
 
-        return new NetcoinsConnector([], 2, $http);
+        $auth = new AuthClientCredentials([], 'api/v2/', $http);
+
+        return new NetcoinsConnector([], 2, $http, $auth);
     }
 
     /**

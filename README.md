@@ -1,18 +1,18 @@
-# Netcoins API (PHP)
+# Netcoins SDK (PHP)
 
-This library aims to offer easy to use, highly configurable access to the Netcoins Inc API.
+This dev kit aims to offer easy to use, highly configurable access to the Netcoins Inc API.
 
 ## Installation
 
 Use [composer](https://getcomposer.org/download/) to install the library.
 
 ```bash
-composer require netcoins/netcoins-api
+composer require netcoins/netcoins-sdk-php
 ```
 
 ## Usage
 
-**Netcoins API has a minimum requirement of PHP 7.3.**
+**Netcoins SDK has a minimum requirement of PHP 7.3.**
 
 Currently most endpoints require authentication. You can authenticate by configuring your Netcoins login credentials and passing them to the Netcoins Client.
 

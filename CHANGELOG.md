@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+- Better exception handling. Creating new Exception classes.
+- Changing auth method to Personal Access Token.
+- Updating limit methods once API server correctly accepts params & responds.
+
 ## [0.1.0] - 2020-09-11
 ### Added
 - Netcoins API Connector. A simple wrapper around Guzzle HTTP.
