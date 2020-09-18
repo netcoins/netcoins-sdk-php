@@ -3,6 +3,7 @@ namespace Netcoins;
 
 use Netcoins\Connector;
 use Netcoins\Contracts\ApiInterface;
+use Netcoins\Exceptions\AssetNotAvailableException;
 use Netcoins\Exceptions\InvalidAttributeException;
 
 /**
@@ -76,16 +77,17 @@ class Client
     /**
      * Fetches a quote for a given asset/quantity
      *
-     * @param float     $quantity
+     * @param float     $value
      * @param string    $side
      * @param string    $asset
      * @param string    $currency
+     * @param bool      $useFiat (optional,default:false)
      *
      * @return array
      *
      * @throws InvalidAttributeException
      */
-    public function quote(float $quantity, string $side, string $asset, string $currency): array
+    public function quote(float $value, string $side, string $asset, string $currency, bool $useFiat = false): array
     {
         // check currency exists in allowed currencies array
         if (!in_array(strtolower($currency), static::CURRENCIES)) {
@@ -93,12 +95,20 @@ class Client
                 the following currencies: ' . implode(', ', static::CURRENCIES));
         }
 
-        return $this->api->post('quote', [
-            'quantity' => $quantity,
+        $values = [];
+        if (!$useFiat) {
+            $values['quantity'] = $value;
+        }
+
+        if ($useFiat) {
+            $values['amount'] = $value;
+        }
+
+        return $this->api->post('quote', array_merge($values, [
             'side' => $side,
             'asset' => strtolower($asset),
             'counter_asset' => strtolower($currency),
-        ]);
+        ]));
     }
 
     /**
@@ -300,7 +310,7 @@ class Client
         $balances = $this->api->get('balances');
         $asset = strtoupper($asset);
 
-        if ($asset && isset($balances[$asset])) {
+        if (isset($balances[$asset])) {
             return (float) $balances[$asset];
         }
 
@@ -327,24 +337,65 @@ class Client
     }
 
     /**
-     * Convert fiat amount to crypto quantity
+     * Fetch withdrawal fee for each asset
      *
-     * @param float     $fiat
-     * @param string    $side
+     * @return array
+     */
+    public function fees(): array
+    {
+        return $this->api->get('fees', true);
+    }
+
+    /**
+     * Fetches the withdrawal fee for a single asset
+     *
      * @param string    $asset
-     * @param string    $currency
      *
      * @return float
+     *
+     * @throws AssetNotAvailableException
      */
-    public function convert(float $fiat, string $side, string $asset, string $currency): float
+    public function fee(string $asset): float
     {
-        $minimums = ['btc' => 0.001, 'ltc' => 0.5, 'eth' => 0.1, 'xrp' => 50, 'bch' => 0.1];
+        $fees = $this->api->get('fees', true);
+        $asset = strtoupper($asset);
 
-        // fetch arbitrary quote for an accurate asset price.
-        $quote = $this->quote($minimums[strtolower($asset)], $side, $asset, $currency);
-        $price = $quote['price'];
+        if (!isset($fees[$asset])) {
+            throw new AssetNotAvailableException('Asset \''.$asset.'\' is unavailable or does not exist.');
+        }
 
-        return bcdiv($fiat, $price, 8);
+        return (float) $fees[$asset];
+    }
+
+    /**
+     * Fetch the mins and maxes for buy and sell of each asset
+     *
+     * @return array
+     */
+    public function boundaries(): array
+    {
+        return $this->api->get('boundaries', true);
+    }
+
+    /**
+     * Fetch the mins and maxes for buy and sell of a single asset
+     *
+     * @param string $asset
+     *
+     * @return array
+     *
+     * @throws AssetNotAvailableException
+     */
+    public function boundary(string $asset): array
+    {
+        $boundaries = $this->api->get('boundaries', true);
+        $asset = strtoupper($asset);
+
+        if (!isset($boundaries[$asset])) {
+            throw new AssetNotAvailableException('Asset \''.$asset.'\' is unavailable or does not exist.');
+        }
+
+        return $boundaries[$asset];
     }
 
     /**

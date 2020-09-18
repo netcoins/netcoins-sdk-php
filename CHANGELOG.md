@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 - Better exception handling. Creating new Exception classes.
 - Updating limit methods once API server correctly accepts params & responds.
+- Adding new boundaries, fees, and transfers endpoints.
 
 ## [0.1.1] - 2020-09-17
 ### Added
