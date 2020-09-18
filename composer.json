@@ -1,6 +1,6 @@
 {
-    "name": "netcoins/netcoins-api",
-    "description": "A package",
+    "name": "netcoins/netcoins-sdk-php",
+    "description": "Netcoins SDK - API access. This dev kit aims to offer easy to use, highly configurable access to the Netcoins Inc API.",
     "license": "MIT",
     "authors": [
         {
