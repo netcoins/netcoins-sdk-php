@@ -16,16 +16,13 @@ composer require netcoins/netcoins-sdk-php
 
 Currently most endpoints require authentication. You can authenticate by configuring your Netcoins login credentials and passing them to the Netcoins Client.
 
-Please [contact our developers](#) for full access to the Netcoins API. We will provide you with your `client_id` and `client_secret`.
+Please [contact our developers](#) for full access to the Netcoins API. We will provide you with your auth `token`.
 
 ```php
 use Netcoins/Client as Netcoins;
 
 $netcoins = new Netcoins([
-    'client_id' => 'your_given_client_id',
-    'client_secret' => 'your_given_client_secret',
-    'username' => 'your_email_address',
-    'password' => 'your_netcoins_password',
+    'token' => 'your_given_auth_token'
 ]);
 
 ...

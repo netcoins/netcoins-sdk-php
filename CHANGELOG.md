@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Abstract Auth class created to handle authorization to Netcoins API.
 - AuthClientCredentials created to handle legacy `client_id` and `client_secret` connection.
-- AuthPersonalAccessToken created and set as default. Consumers are given a long lived token to connect.
+- AuthPersonalAccessToken created and set as default. Consumers are given a long lived `token` to connect.
 ### Changed
 - Auth abstracted from Connector.
 
