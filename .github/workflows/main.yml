@@ -1,12 +1,13 @@
-name: CI
+name: Run Tests
 
 on:
   pull_request:
-    branches: [ v1.x ]
+    branches:
+      - master
 
 jobs:
   build:
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
