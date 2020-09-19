@@ -55,21 +55,17 @@ To fetch a list of ticker prices:
 ...
 
 $prices = $netcoins->prices();
-// or
+//or
 $prices = $netcoins->prices('btc', 'cad');
 
 // outputs:
 /*
 array(14) {
-  ["BTC:CAD"]=>
-  array(3) {
-    ["buy"]=>
-    string(8) "13639.86"
-    ["sell"]=>
-    string(8) "13474.29"
-    ["date"]=>
-    string(19) "2020-09-11 07:27:03"
-  }
+  ["BTC:CAD"] => array(3) {
+    ["buy"] => string(8) "13639.86"
+    ["sell"] => string(8) "13474.29"
+    ["date"] => string(19) "2020-09-11 07:27:03"
+  },
   ...
 }
 */
