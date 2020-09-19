@@ -52,7 +52,7 @@ class Client
      */
     public function prices(?string $asset = null, ?string $currency = null): array
     {
-        $prices = $this->api->get('prices');
+        $prices = $this->api->get('prices', false);
 
         if ($asset && $currency) {
             $asset = strtoupper($asset);

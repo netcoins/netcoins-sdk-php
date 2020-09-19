@@ -75,7 +75,7 @@ array(14) {
 */
 ```
 
-**Please consult our [official docs](#) for an exhaustive list of endpoints and methods.**
+**Please [consult our wiki](wiki) for comprehensive documentation.**
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
