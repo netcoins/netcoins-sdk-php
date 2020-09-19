@@ -4,7 +4,21 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 - Better exception handling. Creating new Exception classes.
 - Updating limit methods once API server correctly accepts params & responds.
-- Adding new boundaries, fees, and transfers endpoints.
+
+## [0.1.2] - 2020-09-18
+### Added
+- New account endpoints added:
+    - account
+        - boundaries()
+        - boundary()
+        - fees()
+        - fee()
+        - transfers()
+### Changed
+- Auth headers no longer added to non auth endpoints.
+### Fixed
+- Bad formatting on date vars for `orders/`.
+- GET requests set to user querystring instead of JSON body.
 
 ## [0.1.1] - 2020-09-17
 ### Added
