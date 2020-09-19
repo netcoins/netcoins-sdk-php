@@ -22,17 +22,12 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-        env:
-          update: true
-
-      - name: Check PHP version
-        run: php --version
 
       - name: Validate composer.json and composer.lock
         run: composer validate
 
       - name: Composer install project
-        uses: php-actions/composer@v2
+        run: composer install --no-interaction --no-suggest --no-progress
 
       - name: Run unit tests
         uses: php-actions/phpunit@v8
