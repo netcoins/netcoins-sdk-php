@@ -7,14 +7,32 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: true
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.3']
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.3'
-      - uses: php-actions/composer@v2
-      - uses: php-actions/phpunit@v8
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
+      - name: Switch PHP version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+        env:
+          update: true
+
+      - name: Check PHP version
+        run: php --version
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Composer install project
+        uses: php-actions/composer@v2
+
+      - name: Run unit tests
+        uses: php-actions/phpunit@v8

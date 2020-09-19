@@ -27,7 +27,12 @@ class Client
     /**
      * @var array
      */
-    const STATUSES = ['open', 'cancelled', 'delivered'];
+    const STATUSES = ['open', 'completed'];
+
+    /**
+     * @var array
+     */
+    const SIDES = ['buy', 'sell'];
 
     /**
      * Accepts a config array of connection details, and an optional version constraint.
@@ -167,7 +172,7 @@ class Client
             'price' => $price,
             'amount' => $amount,
             'side' => 'buy',
-            'asset' => $asset,
+            'asset' => strtolower($asset),
             'counter_asset' => $currency,
         ]);
     }
@@ -196,7 +201,7 @@ class Client
             'price' => $price,
             'quantity' => $quantity,
             'side' => 'sell',
-            'asset' => $asset,
+            'asset' => strtolower($asset),
             'counter_asset' => $currency,
         ]);
     }

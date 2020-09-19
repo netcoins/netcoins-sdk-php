@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
         - transfers()
 ### Changed
 - Auth headers no longer added to non auth endpoints.
+- Updated quote to allow fiat amount or crypto quantity.
 ### Fixed
 - Bad formatting on date vars for `orders/`.
 - GET requests set to user querystring instead of JSON body.
