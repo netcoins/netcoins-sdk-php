@@ -3,6 +3,7 @@ namespace Netcoins;
 
 use Netcoins\Connector;
 use Netcoins\Contracts\ApiInterface;
+use Netcoins\Exceptions\AssetNotAvailableException;
 use Netcoins\Exceptions\InvalidAttributeException;
 
 /**
@@ -26,7 +27,12 @@ class Client
     /**
      * @var array
      */
-    const STATUSES = ['open', 'cancelled', 'delivered'];
+    const STATUSES = ['open', 'completed'];
+
+    /**
+     * @var array
+     */
+    const SIDES = ['buy', 'sell'];
 
     /**
      * Accepts a config array of connection details, and an optional version constraint.
@@ -51,7 +57,7 @@ class Client
      */
     public function prices(?string $asset = null, ?string $currency = null): array
     {
-        $prices = $this->api->get('prices');
+        $prices = $this->api->get('prices', false);
 
         if ($asset && $currency) {
             $asset = strtoupper($asset);
@@ -76,16 +82,17 @@ class Client
     /**
      * Fetches a quote for a given asset/quantity
      *
-     * @param float     $quantity
+     * @param float     $value
      * @param string    $side
      * @param string    $asset
      * @param string    $currency
+     * @param bool      $useFiat (optional,default:false)
      *
      * @return array
      *
      * @throws InvalidAttributeException
      */
-    public function quote(float $quantity, string $side, string $asset, string $currency): array
+    public function quote(float $value, string $side, string $asset, string $currency, bool $useFiat = false): array
     {
         // check currency exists in allowed currencies array
         if (!in_array(strtolower($currency), static::CURRENCIES)) {
@@ -93,12 +100,20 @@ class Client
                 the following currencies: ' . implode(', ', static::CURRENCIES));
         }
 
-        return $this->api->post('quote', [
-            'quantity' => $quantity,
+        $values = [];
+        if (!$useFiat) {
+            $values['quantity'] = $value;
+        }
+
+        if ($useFiat) {
+            $values['amount'] = $value;
+        }
+
+        return $this->api->post('quote', array_merge($values, [
             'side' => $side,
             'asset' => strtolower($asset),
             'counter_asset' => strtolower($currency),
-        ]);
+        ]));
     }
 
     /**
@@ -157,7 +172,7 @@ class Client
             'price' => $price,
             'amount' => $amount,
             'side' => 'buy',
-            'asset' => $asset,
+            'asset' => strtolower($asset),
             'counter_asset' => $currency,
         ]);
     }
@@ -186,7 +201,7 @@ class Client
             'price' => $price,
             'quantity' => $quantity,
             'side' => 'sell',
-            'asset' => $asset,
+            'asset' => strtolower($asset),
             'counter_asset' => $currency,
         ]);
     }
@@ -222,14 +237,22 @@ class Client
     public function orders(?int $beforeDateTime = null, ?int $afterDateTime = null,
         ?int $offset = null, ?int $limit = null, ?string $status = null): array
     {
+        $params = [];
+
         // convert timestamp to formatted date time
         if (!empty($beforeDateTime)) {
-            $beforeDateTime = date('Y:m:d H:i:s', $beforeDateTime);
+            $beforeDateTime = date('Y-m-d H:i:s', $beforeDateTime);
+            $params['before'] = $beforeDateTime;
         }
 
         // convert timestamp to formatted date time
         if (!empty($afterDateTime)) {
-            $afterDateTime = date('Y:m:d H:i:s', $afterDateTime);
+            $afterDateTime = date('Y-m-d H:i:s', $afterDateTime);
+            $params['after'] = $afterDateTime;
+        }
+
+        if (!empty($status)) {
+            $params['status'] = $status;
         }
 
         // check status exists in allowed status array
@@ -238,13 +261,15 @@ class Client
                 Please use one of the following, or omit the status:' . implode(', ', static::STATUSES));
         }
 
-        return $this->api->get('orders', true, [
-            'before' => $beforeDateTime,
-            'after' => $afterDateTime,
-            'offset' => $offset,
-            'limit' => $limit,
-            'status' => $status,
-        ]);
+        if (!empty($offset)) {
+            $params['offset'] = $offset;
+        }
+
+        if (!empty($limit)) {
+            $params['limit'] = $limit;
+        }
+
+        return $this->api->get('orders', true, $params);
     }
 
     /**
@@ -290,7 +315,7 @@ class Client
         $balances = $this->api->get('balances');
         $asset = strtoupper($asset);
 
-        if ($asset && isset($balances[$asset])) {
+        if (isset($balances[$asset])) {
             return (float) $balances[$asset];
         }
 
@@ -304,7 +329,7 @@ class Client
      *
      * @return string|null
      */
-    public function despoitAddress(string $asset): ?string
+    public function depositAddress(string $asset): ?string
     {
         $asset = strtoupper($asset);
         $address = $this->api->get('deposit/'.$asset);
@@ -317,24 +342,106 @@ class Client
     }
 
     /**
-     * Convert fiat amount to crypto quantity
+     * Fetch withdrawal fee for each asset
      *
-     * @param float     $fiat
-     * @param string    $side
+     * @return array
+     */
+    public function fees(): array
+    {
+        return $this->api->get('fees', true);
+    }
+
+    /**
+     * Fetches the withdrawal fee for a single asset
+     *
      * @param string    $asset
-     * @param string    $currency
      *
      * @return float
+     *
+     * @throws AssetNotAvailableException
      */
-    public function convert(float $fiat, string $side, string $asset, string $currency): float
+    public function fee(string $asset): float
     {
-        $minimums = ['btc' => 0.001, 'ltc' => 0.5, 'eth' => 0.1, 'xrp' => 50, 'bch' => 0.1];
+        $fees = $this->api->get('fees', true);
+        $asset = strtoupper($asset);
 
-        // fetch arbitrary quote for an accurate asset price.
-        $quote = $this->quote($minimums[strtolower($asset)], $side, $asset, $currency);
-        $price = $quote['price'];
+        if (!isset($fees[$asset])) {
+            throw new AssetNotAvailableException('Asset \''.$asset.'\' is unavailable or does not exist.');
+        }
 
-        return bcdiv($fiat, $price, 8);
+        return (float) $fees[$asset];
+    }
+
+    /**
+     * Fetch the mins and maxes for buy and sell of each asset
+     *
+     * @return array
+     */
+    public function boundaries(): array
+    {
+        return $this->api->get('boundaries', true);
+    }
+
+    /**
+     * Fetch the mins and maxes for buy and sell of a single asset
+     *
+     * @param string $asset
+     *
+     * @return array
+     *
+     * @throws AssetNotAvailableException
+     */
+    public function boundary(string $asset): array
+    {
+        $boundaries = $this->api->get('boundaries', true);
+        $asset = strtoupper($asset);
+
+        if (!isset($boundaries[$asset])) {
+            throw new AssetNotAvailableException('Asset \''.$asset.'\' is unavailable or does not exist.');
+        }
+
+        return $boundaries[$asset];
+    }
+
+    /**
+     * Fetches a list of withdrawals
+     *
+     * @param int       $beforeDateTime (optional)
+     * @param int       $afterDateTime (optional)
+     * @param int       $offset (optional)
+     * @param int       $limit (optional)
+     *
+     * @return array
+     *
+     * @throws InvalidAttributeException
+     *
+     */
+    public function transfers(?int $beforeDateTime = null, ?int $afterDateTime = null,
+        ?int $offset = null, ?int $limit = null): array
+    {
+        $params = [];
+
+        // convert timestamp to formatted date time
+        if (!empty($beforeDateTime)) {
+            $beforeDateTime = date('Y-m-d H:i:s', $beforeDateTime);
+            $params['before'] = $beforeDateTime;
+        }
+
+        // convert timestamp to formatted date time
+        if (!empty($afterDateTime)) {
+            $afterDateTime = date('Y-m-d H:i:s', $afterDateTime);
+            $params['after'] = $afterDateTime;
+        }
+
+        if (!empty($offset)) {
+            $params['offset'] = $offset;
+        }
+
+        if (!empty($limit)) {
+            $params['limit'] = $limit;
+        }
+
+        return $this->api->get('transfers', true, $params);
     }
 
     /**

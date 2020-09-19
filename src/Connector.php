@@ -4,7 +4,6 @@ namespace Netcoins;
 use GuzzleHttp\Client as Guzzle;
 use Netcoins\Contracts\ApiInterface;
 use Netcoins\Contracts\AuthInterface;
-use Netcoins\Auth\AuthClientCredentials;
 use GuzzleHttp\Exception\GuzzleException;
 use Netcoins\Auth\AuthPersonalAccessToken;
 
@@ -92,20 +91,28 @@ class Connector implements ApiInterface
      */
     private function query(string $endpoint, ?array $body = [], string $method = 'get', bool $auth = true): array
     {
-        if ($auth && $this->auth->isAuthExpired()) {
-            $this->auth->authorize();
-        }
-
-        $json = [];
-        if ($body) {
-            $json = [\GuzzleHttp\RequestOptions::JSON => $body];
-        }
-
-        $response = $this->http->request($method, $this->prefix . $endpoint, array_merge([
+        $headers = [
             \GuzzleHttp\RequestOptions::HEADERS => [
-                'Authorization' => 'Bearer '.$this->auth->getToken()
+                'Accept' => 'application/json',
             ]
-        ], $json));
+        ];
+
+        if ($auth) {
+            if ($this->auth->isAuthExpired()) {
+                $this->auth->authorize();
+            }
+
+            $headers[\GuzzleHttp\RequestOptions::HEADERS]['Authorization'] = "Bearer {$this->auth->getToken()}";
+        }
+
+        $params = [];
+        if ($body && in_array(strtolower($method), ['post', 'put', 'patch', 'delete'])) {
+            $params = [\GuzzleHttp\RequestOptions::JSON => $body];
+        } else if ($body && strtolower($method) === 'get') {
+            $params = [\GuzzleHttp\RequestOptions::QUERY => $body];
+        }
+
+        $response = $this->http->request($method, $this->prefix . $endpoint, array_merge($headers, $params));
 
         $content = $response->getBody()->getContents();
         $data = json_decode($content, true);

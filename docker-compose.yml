@@ -1,7 +1,0 @@
-web:
- image: fbraz3/lnmp
- volumes:
- - ./:/app/public/
- ports:
- - "127.0.0.1:82:80"
- - "127.0.0.1:3308:3306"

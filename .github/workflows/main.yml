@@ -1,0 +1,33 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: true
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.3']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Switch PHP version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Composer install project
+        run: composer install --no-interaction --no-suggest --no-progress
+
+      - name: Run unit tests
+        uses: php-actions/phpunit@v8

@@ -19,12 +19,7 @@ final class ClientTest extends \PHPUnit\Framework\TestCase
      */
     private function getNetcoins(array $responses = [])
     {
-        $mock = new MockHandler(array_merge([
-            new Response(200, [], json_encode([
-                'access_token' => 'Q3YUxsq4QHWrpxZ0Gequqdu15xCljrah',
-                'expires_in' => time()+300,
-            ]))
-        ], $responses));
+        $mock = new MockHandler(array_merge([], $responses));
 
         $stack = HandlerStack::create($mock);
         $http = new Guzzle(['handler' => $stack]);

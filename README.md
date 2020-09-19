@@ -16,16 +16,13 @@ composer require netcoins/netcoins-sdk-php
 
 Currently most endpoints require authentication. You can authenticate by configuring your Netcoins login credentials and passing them to the Netcoins Client.
 
-Please [contact our developers](#) for full access to the Netcoins API. We will provide you with your `client_id` and `client_secret`.
+Please [contact our developers](#) for full access to the Netcoins API. We will provide you with your auth `token`.
 
 ```php
 use Netcoins/Client as Netcoins;
 
 $netcoins = new Netcoins([
-    'client_id' => 'your_given_client_id',
-    'client_secret' => 'your_given_client_secret',
-    'username' => 'your_email_address',
-    'password' => 'your_netcoins_password',
+    'token' => 'your_given_auth_token'
 ]);
 
 ...
@@ -58,27 +55,23 @@ To fetch a list of ticker prices:
 ...
 
 $prices = $netcoins->prices();
-// or
+//or
 $prices = $netcoins->prices('btc', 'cad');
 
 // outputs:
 /*
 array(14) {
-  ["BTC:CAD"]=>
-  array(3) {
-    ["buy"]=>
-    string(8) "13639.86"
-    ["sell"]=>
-    string(8) "13474.29"
-    ["date"]=>
-    string(19) "2020-09-11 07:27:03"
-  }
+  ["BTC:CAD"] => array(3) {
+    ["buy"] => string(8) "13639.86"
+    ["sell"] => string(8) "13474.29"
+    ["date"] => string(19) "2020-09-11 07:27:03"
+  },
   ...
 }
 */
 ```
 
-**Please consult our [official docs](#) for an exhaustive list of endpoints and methods.**
+**Please [consult our wiki](https://github.com/netcoins/netcoins-sdk-php/wiki) for comprehensive documentation.**
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
