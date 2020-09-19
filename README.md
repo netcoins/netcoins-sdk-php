@@ -1,3 +1,5 @@
+![Unit Tests](https://github.com/netcoins/netcoins-sdk-php/workflows/Run%20Tests/badge.svg)
+
 # Netcoins SDK (PHP)
 
 This dev kit aims to offer easy to use, highly configurable access to the Netcoins Inc API.
