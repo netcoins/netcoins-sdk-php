@@ -91,13 +91,18 @@ class Connector implements ApiInterface
      */
     private function query(string $endpoint, ?array $body = [], string $method = 'get', bool $auth = true): array
     {
-        $headers = [];
+        $headers = [
+            \GuzzleHttp\RequestOptions::HEADERS => [
+                'Accept' => 'application/json',
+            ]
+        ];
+
         if ($auth) {
             if ($this->auth->isAuthExpired()) {
                 $this->auth->authorize();
             }
 
-            $headers[\GuzzleHttp\RequestOptions::HEADERS] = ['Authorization' => "Bearer $this->token"];
+            $headers[\GuzzleHttp\RequestOptions::HEADERS]['Authorization'] = "Bearer {$this->auth->getToken()}";
         }
 
         $params = [];

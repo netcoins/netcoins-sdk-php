@@ -399,6 +399,47 @@ class Client
     }
 
     /**
+     * Fetches a list of withdrawals
+     *
+     * @param int       $beforeDateTime (optional)
+     * @param int       $afterDateTime (optional)
+     * @param int       $offset (optional)
+     * @param int       $limit (optional)
+     *
+     * @return array
+     *
+     * @throws InvalidAttributeException
+     *
+     */
+    public function transfers(?int $beforeDateTime = null, ?int $afterDateTime = null,
+        ?int $offset = null, ?int $limit = null): array
+    {
+        $params = [];
+
+        // convert timestamp to formatted date time
+        if (!empty($beforeDateTime)) {
+            $beforeDateTime = date('Y-m-d H:i:s', $beforeDateTime);
+            $params['before'] = $beforeDateTime;
+        }
+
+        // convert timestamp to formatted date time
+        if (!empty($afterDateTime)) {
+            $afterDateTime = date('Y-m-d H:i:s', $afterDateTime);
+            $params['after'] = $afterDateTime;
+        }
+
+        if (!empty($offset)) {
+            $params['offset'] = $offset;
+        }
+
+        if (!empty($limit)) {
+            $params['limit'] = $limit;
+        }
+
+        return $this->api->get('transfers', true, $params);
+    }
+
+    /**
      * Return instance of Netcoins API Connector
      *
      * @return ApiInterface
