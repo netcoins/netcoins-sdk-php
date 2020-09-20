@@ -11,35 +11,35 @@ use GuzzleHttp\Client as Guzzle;
 interface ApiInterface
 {
     /**
-     * Endpoint GET
+     * Endpoint GET.
      *
-     * @param string    $endpoint
-     * @param bool      $auth (optional,default:true)
-     * @param array     $body (optional,default:[])
+     * @param string $endpoint
+     * @param bool   $auth     (optional,default:true)
+     * @param array  $body     (optional,default:[])
      *
      * @return array
      */
     public function get(string $endpoint, bool $auth = true, array $body = []): array;
 
     /**
-     * Endpoint POST
+     * Endpoint POST.
      *
-     * @param string    $endpoint
-     * @param array     $body (optional,default:[])
+     * @param string $endpoint
+     * @param array  $body     (optional,default:[])
      *
      * @return array
      */
     public function post(string $endpoint, array $body = []): array;
 
     /**
-     * Retrieves Guzzle implementation
+     * Retrieves Guzzle implementation.
      *
      * @return Guzzle
      */
     public function getHttpClient(): Guzzle;
 
     /**
-     * Returns the concrete Auth implementation
+     * Returns the concrete Auth implementation.
      *
      * @return AuthInterface
      */

@@ -4,14 +4,14 @@ namespace Netcoins\Contracts;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
- * An interface to determine the obligations of a concrete Authorization class
+ * An interface to determine the obligations of a concrete Authorization class.
  *
  * @author Simon Willan <swillan@gonetcoins.com>
  */
 interface AuthInterface
 {
     /**
-     * Authorizes API access
+     * Authorizes API access.
      *
      * @return void
      *
@@ -20,7 +20,7 @@ interface AuthInterface
     public function authorize(): void;
 
     /**
-     * Resets & revokes authorization
+     * Resets & revokes authorization.
      *
      * @return void
      *
@@ -29,7 +29,7 @@ interface AuthInterface
     public function revoke(): void;
 
     /**
-     * Gets auth config
+     * Gets auth config.
      *
      * @return array
      */
@@ -43,14 +43,14 @@ interface AuthInterface
     public function isAuthExpired(): bool;
 
     /**
-     * Gets auth token
+     * Gets auth token.
      *
      * @return string|null
      */
     public function getToken(): ?string;
 
     /**
-     * Gets token expiry time
+     * Gets token expiry time.
      *
      * @return int|null
      */
