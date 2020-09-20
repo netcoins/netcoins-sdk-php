@@ -2,11 +2,11 @@
 namespace Netcoins\Auth;
 
 use GuzzleHttp\Client as Guzzle;
-use Netcoins\Contracts\AuthInterface;
 use GuzzleHttp\Exception\GuzzleException;
+use Netcoins\Contracts\AuthInterface;
 
 /**
- * Base auth class, containing essential auth features across all types
+ * Base auth class, containing essential auth features across all types.
  *
  * @author Simon Willan <swillan@gonetcoins.com>
  */
@@ -43,11 +43,11 @@ abstract class Auth implements AuthInterface
     protected $prefix;
 
     /**
-     * Setup Auth with config
+     * Setup Auth with config.
      *
-     * @param array     $config
-     * @param string    $prefix
-     * @param Guzzle    $http
+     * @param array  $config
+     * @param string $prefix
+     * @param Guzzle $http
      */
     public function __construct(array $config, string $prefix, Guzzle $http)
     {
@@ -57,7 +57,7 @@ abstract class Auth implements AuthInterface
     }
 
     /**
-     * Resets & revokes authorization
+     * Resets & revokes authorization.
      *
      * @return void
      *
@@ -65,10 +65,10 @@ abstract class Auth implements AuthInterface
      */
     public function revoke(): void
     {
-        $this->http->request('post', $this->prefix . 'auth/revoke', [
+        $this->http->request('post', $this->prefix.'auth/revoke', [
             \GuzzleHttp\RequestOptions::HEADERS => [
-                'Authorization' => "Bearer $this->token"
-            ]
+                'Authorization' => "Bearer $this->token",
+            ],
         ]);
 
         $this->token = null;
@@ -77,9 +77,9 @@ abstract class Auth implements AuthInterface
     }
 
     /**
-     * Sets http request config
+     * Sets http request config.
      *
-     * @param array     $config
+     * @param array $config
      *
      * @return void
      */
@@ -90,7 +90,7 @@ abstract class Auth implements AuthInterface
     }
 
     /**
-     * Gets auth config
+     * Gets auth config.
      *
      * @return array
      */
@@ -107,11 +107,12 @@ abstract class Auth implements AuthInterface
     public function isAuthExpired(): bool
     {
         $now = time();
+
         return !$this->token || ($this->token && $this->expiresAt <= $now);
     }
 
     /**
-     * Gets auth token
+     * Gets auth token.
      *
      * @return string|null
      */
@@ -121,9 +122,9 @@ abstract class Auth implements AuthInterface
     }
 
     /**
-     * Sets API auth token
+     * Sets API auth token.
      *
-     * @param string    $token
+     * @param string $token
      *
      * @return void
      */
@@ -133,7 +134,7 @@ abstract class Auth implements AuthInterface
     }
 
     /**
-     * Gets token expiry time
+     * Gets token expiry time.
      *
      * @return int|null
      */

@@ -1,7 +1,6 @@
 <?php
 namespace Netcoins;
 
-use Netcoins\Connector;
 use Netcoins\Contracts\ApiInterface;
 use Netcoins\Exceptions\AssetNotAvailableException;
 use Netcoins\Exceptions\InvalidAttributeException;
@@ -38,9 +37,9 @@ class Client
      * Accepts a config array of connection details, and an optional version constraint.
      * Additionally can be given an new API Connector if you intend to write your own.
      *
-     * @param array         $config (optional,default:[])
-     * @param int           $version (optional,default:2)
-     * @param ApiInterface  $http
+     * @param array        $config  (optional,default:[])
+     * @param int          $version (optional,default:2)
+     * @param ApiInterface $http
      */
     public function __construct($config = [], $version = 2, ApiInterface $api = null)
     {
@@ -48,10 +47,10 @@ class Client
     }
 
     /**
-     * Fetches the price for all tradeable pairs, or a given asset/pair
+     * Fetches the price for all tradeable pairs, or a given asset/pair.
      *
-     * @param string    $asset (optional)
-     * @param string    $currency (optional)
+     * @param string $asset    (optional)
+     * @param string $currency (optional)
      *
      * @return array
      */
@@ -70,7 +69,7 @@ class Client
     }
 
     /**
-     * Fetches a list of tradeable assets
+     * Fetches a list of tradeable assets.
      *
      * @return array
      */
@@ -80,13 +79,13 @@ class Client
     }
 
     /**
-     * Fetches a quote for a given asset/quantity
+     * Fetches a quote for a given asset/quantity.
      *
-     * @param float     $value
-     * @param string    $side
-     * @param string    $asset
-     * @param string    $currency
-     * @param bool      $useFiat (optional,default:false)
+     * @param float  $value
+     * @param string $side
+     * @param string $asset
+     * @param string $currency
+     * @param bool   $useFiat  (optional,default:false)
      *
      * @return array
      *
@@ -97,7 +96,7 @@ class Client
         // check currency exists in allowed currencies array
         if (!in_array(strtolower($currency), static::CURRENCIES)) {
             throw new InvalidAttributeException('tradeable pair not valid. You may only trade against
-                the following currencies: ' . implode(', ', static::CURRENCIES));
+                the following currencies: '.implode(', ', static::CURRENCIES));
         }
 
         $values = [];
@@ -117,9 +116,9 @@ class Client
     }
 
     /**
-     * Creates an order for a given asset/pair
+     * Creates an order for a given asset/pair.
      *
-     * @param string    $quoteId
+     * @param string $quoteId
      *
      * @return array
      */
@@ -129,12 +128,12 @@ class Client
     }
 
     /**
-     * Creates a withdraw request for a given asset quantity
+     * Creates a withdraw request for a given asset quantity.
      *
-     * @param string    $asset
-     * @param float     $quantity
-     * @param string    $wallet
-     * @param string    $memo (optional)
+     * @param string $asset
+     * @param float  $quantity
+     * @param string $wallet
+     * @param string $memo     (optional)
      *
      * @return array
      */
@@ -149,12 +148,12 @@ class Client
     }
 
     /**
-     * Opens a buy limit order
+     * Opens a buy limit order.
      *
-     * @param float     $price
-     * @param float     $amount
-     * @param string    $asset
-     * @param string    $currency
+     * @param float  $price
+     * @param float  $amount
+     * @param string $asset
+     * @param string $currency
      *
      * @return array
      *
@@ -165,7 +164,7 @@ class Client
         // check currency exists in allowed currencies array
         if (!in_array(strtolower($currency), static::CURRENCIES)) {
             throw new InvalidAttributeException('tradeable pair not valid. You may only trade against
-                the following currencies: ' . implode(', ', static::CURRENCIES));
+                the following currencies: '.implode(', ', static::CURRENCIES));
         }
 
         return $this->api->post('order', [
@@ -178,12 +177,12 @@ class Client
     }
 
     /**
-     * Opens a sell limit order
+     * Opens a sell limit order.
      *
-     * @param float     $price
-     * @param float     $quantity
-     * @param string    $asset
-     * @param string    $currency
+     * @param float  $price
+     * @param float  $quantity
+     * @param string $asset
+     * @param string $currency
      *
      * @return array
      *
@@ -194,7 +193,7 @@ class Client
         // check currency exists in allowed currencies array
         if (!in_array(strtolower($currency), static::CURRENCIES)) {
             throw new InvalidAttributeException('tradeable pair not valid. You may only trade against
-                the following currencies: ' . implode(', ', static::CURRENCIES));
+                the following currencies: '.implode(', ', static::CURRENCIES));
         }
 
         return $this->api->post('order', [
@@ -207,7 +206,7 @@ class Client
     }
 
     /**
-     * Cancels a limit order
+     * Cancels a limit order.
      *
      * @param string $orderId
      *
@@ -221,18 +220,17 @@ class Client
     }
 
     /**
-     * Fetches a list of open limit orders
+     * Fetches a list of open limit orders.
      *
-     * @param int       $beforeDateTime (optional)
-     * @param int       $afterDateTime (optional)
-     * @param int       $offset (optional)
-     * @param int       $limit (optional)
-     * @param string    $status (optional)
+     * @param int    $beforeDateTime (optional)
+     * @param int    $afterDateTime  (optional)
+     * @param int    $offset         (optional)
+     * @param int    $limit          (optional)
+     * @param string $status         (optional)
      *
      * @return array
      *
      * @throws InvalidAttributeException
-     *
      */
     public function orders(?int $beforeDateTime = null, ?int $afterDateTime = null,
         ?int $offset = null, ?int $limit = null, ?string $status = null): array
@@ -258,7 +256,7 @@ class Client
         // check status exists in allowed status array
         if (!empty($status) && !in_array(strtolower($status), static::STATUSES)) {
             throw new InvalidAttributeException('Status \''.$status.'\' is not a valid limit order status.
-                Please use one of the following, or omit the status:' . implode(', ', static::STATUSES));
+                Please use one of the following, or omit the status:'.implode(', ', static::STATUSES));
         }
 
         if (!empty($offset)) {
@@ -273,7 +271,7 @@ class Client
     }
 
     /**
-     * Fetches account details for the authorized user
+     * Fetches account details for the authorized user.
      *
      * @return array
      */
@@ -283,9 +281,9 @@ class Client
     }
 
     /**
-     * Fetches a list of account balances
+     * Fetches a list of account balances.
      *
-     * @param string    $asset (optional)
+     * @param string $asset (optional)
      *
      * @return array
      */
@@ -304,9 +302,9 @@ class Client
     }
 
     /**
-     * Fetches the balance of a single asset
+     * Fetches the balance of a single asset.
      *
-     * @param string    $asset
+     * @param string $asset
      *
      * @return float
      */
@@ -323,9 +321,9 @@ class Client
     }
 
     /**
-     * Fetches your Netcoins deposit address for a given asset
+     * Fetches your Netcoins deposit address for a given asset.
      *
-     * @param string    $asset
+     * @param string $asset
      *
      * @return string|null
      */
@@ -342,7 +340,7 @@ class Client
     }
 
     /**
-     * Fetch withdrawal fee for each asset
+     * Fetch withdrawal fee for each asset.
      *
      * @return array
      */
@@ -352,9 +350,9 @@ class Client
     }
 
     /**
-     * Fetches the withdrawal fee for a single asset
+     * Fetches the withdrawal fee for a single asset.
      *
-     * @param string    $asset
+     * @param string $asset
      *
      * @return float
      *
@@ -373,7 +371,7 @@ class Client
     }
 
     /**
-     * Fetch the mins and maxes for buy and sell of each asset
+     * Fetch the mins and maxes for buy and sell of each asset.
      *
      * @return array
      */
@@ -383,7 +381,7 @@ class Client
     }
 
     /**
-     * Fetch the mins and maxes for buy and sell of a single asset
+     * Fetch the mins and maxes for buy and sell of a single asset.
      *
      * @param string $asset
      *
@@ -404,17 +402,16 @@ class Client
     }
 
     /**
-     * Fetches a list of withdrawals
+     * Fetches a list of withdrawals.
      *
-     * @param int       $beforeDateTime (optional)
-     * @param int       $afterDateTime (optional)
-     * @param int       $offset (optional)
-     * @param int       $limit (optional)
+     * @param int $beforeDateTime (optional)
+     * @param int $afterDateTime  (optional)
+     * @param int $offset         (optional)
+     * @param int $limit          (optional)
      *
      * @return array
      *
      * @throws InvalidAttributeException
-     *
      */
     public function transfers(?int $beforeDateTime = null, ?int $afterDateTime = null,
         ?int $offset = null, ?int $limit = null): array
@@ -445,7 +442,7 @@ class Client
     }
 
     /**
-     * Return instance of Netcoins API Connector
+     * Return instance of Netcoins API Connector.
      *
      * @return ApiInterface
      */

@@ -6,14 +6,14 @@ use DateTime;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
- * Personal Access Token auth type for Netcoins API
+ * Personal Access Token auth type for Netcoins API.
  *
  * @author Simon Willan <swillan@gonetcoins.com>
  */
 class AuthPersonalAccessToken extends Auth
 {
     /**
-     * Authorizes API access
+     * Authorizes API access.
      *
      * @return void
      *
