@@ -25,5 +25,16 @@
     "require-dev": {
         "phpunit/phpunit": "^8",
         "friendsofphp/php-cs-fixer": "^2.16"
+    },
+    "extra": {
+        "hooks": {
+            "pre-commit": [
+                "./vendor/bin/php-cs-fixer fix"
+            ],
+            "pre-push": [
+                "./vendor/bin/php-cs-fixer fix --dry-run",
+                "./vendor/bin/phpunit"
+            ]
+        }
     }
 }
