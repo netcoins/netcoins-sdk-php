@@ -1,3 +1,5 @@
+![Unit Tests](https://github.com/netcoins/netcoins-sdk-php/workflows/Run%20Tests/badge.svg)
+
 # Netcoins SDK (PHP)
 
 This dev kit aims to offer easy to use, highly configurable access to the Netcoins Inc API.
@@ -18,11 +20,14 @@ Currently most endpoints require authentication. You can authenticate by configu
 
 Please [contact our developers](#) for full access to the Netcoins API. We will provide you with your auth `token`.
 
+If you do not provide the environment configuration, the client will default to `sandbox` mode. When you are ready to switch to production, set the environment value to `production`.
+
 ```php
 use Netcoins/Client as Netcoins;
 
 $netcoins = new Netcoins([
-    'token' => 'your_given_auth_token'
+    'token' => 'your_given_auth_token',
+    'environment' => 'sandbox',
 ]);
 
 ...

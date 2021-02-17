@@ -4,14 +4,14 @@ namespace Netcoins\Auth;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
- * Client credentials auth type for Netcoins API
+ * Client credentials auth type for Netcoins API.
  *
  * @author Simon Willan <swillan@gonetcoins.com>
  */
 class AuthClientCredentials extends Auth
 {
     /**
-     * Authorizes API access
+     * Authorizes API access.
      *
      * @return void
      *
@@ -26,7 +26,7 @@ class AuthClientCredentials extends Auth
 
         $params = ['grant_type' => 'password', 'scope' => ''];
         $response = $this->http->request('post', 'oauth/token', [
-            \GuzzleHttp\RequestOptions::FORM_PARAMS => array_merge($params, $this->config)
+            \GuzzleHttp\RequestOptions::FORM_PARAMS => array_merge($params, $this->config),
         ]);
 
         $content = $response->getBody()->getContents();
