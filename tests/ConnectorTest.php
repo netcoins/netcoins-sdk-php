@@ -72,4 +72,22 @@ final class ConnectorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(AuthInterface::class, $netcoins->getAuthHandler());
     }
+
+    /**
+     *
+     */
+    public function testConstructorSetsConfig()
+    {
+        // test prod
+        $netcoins = new NetcoinsConnector(['environment' => 'production']);
+        $this->assertEquals('https://netcoins.app', $netcoins->getHost());
+
+        // test default
+        $netcoins = new NetcoinsConnector([]);
+        $this->assertEquals('https://staging.netcoins.app', $netcoins->getHost());
+
+        // test undefined env
+        $netcoins = new NetcoinsConnector(['environment' => 'snadbcx']);
+        $this->assertEquals('https://staging.netcoins.app', $netcoins->getHost());
+    }
 }

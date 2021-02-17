@@ -26,9 +26,19 @@ class Connector implements ApiInterface
     private $auth;
 
     /**
+     * @var array
+     */
+    private $config;
+
+    /**
      * @var string
      */
-    private $host = 'https://staging.netcoins.app';
+    private $sandbox = 'https://staging.netcoins.app';
+
+    /**
+     * @var string
+     */
+    private $production = 'https://netcoins.app';
 
     /**
      * @var string
@@ -45,8 +55,10 @@ class Connector implements ApiInterface
      */
     public function __construct(array $config, int $version = 2, $http = null, AuthInterface $auth = null)
     {
+        $this->setConfig($config);
+
         $this->prefix = "api/v$version/";
-        $this->http = !isset($http) ? new Guzzle(['base_uri' => $this->host]) : $http;
+        $this->http = !isset($http) ? new Guzzle(['base_uri' => $this->getHost()]) : $http;
         $this->auth = !isset($auth) ? new AuthPersonalAccessToken($config, $this->prefix, $this->http) : $auth;
     }
 
@@ -118,6 +130,42 @@ class Connector implements ApiInterface
         $data = json_decode($content, true);
 
         return $data;
+    }
+
+    /**
+     * Set configuration for connector.
+     *
+     * @param array $config
+     *
+     * @return void
+     */
+    private function setConfig(array $config) : void
+    {
+        $defaults = ['environment' => 'sandbox'];
+        $config = array_intersect_key($config, array_flip(['environment']));
+        $config = array_merge($defaults, $config);
+
+        $this->config = $config;
+    }
+
+    /**
+     * Get config settings for connector.
+     *
+     * @return array
+     */
+    public function getConfig() : array
+    {
+        return $this->config;
+    }
+
+    /**
+     * Returns hostname based on environment.
+     *
+     * @return string
+     */
+    public function getHost() : string
+    {
+        return strtolower($this->config['environment']) === 'production' ? $this->production : $this->sandbox;
     }
 
     /**
